@@ -9,27 +9,27 @@
     // ==/UserScript==
 
 
-    let keywords = [
-    "валторна", "как звучит флейта", "гобой"
-    ];
-    let keyword = keywords[getRandom(0, keywords.length)];
+  let keywords = ["валторна", "как звучит флейта", "гобой"];
+  let keyword = keywords[getRandom(0, keywords.length)];
 
-    document.getElementsByClassName('input__control')[0].value = keyword;
-    let btnK = document.getElementsByClassName('button')[0];
-    let links = document.links;
+  document.getElementsByClassName('input__control')[0].value = keyword;
+  let btn = document.getElementsByClassName('button')[0];
+  let links = document.links;
 
-    if (btnK !== undefined) {
-    document.getElementsByClassName('input__control')[0].value = keyword;
-    let btnK = document.getElementsByClassName('button')[0].click();
-    } else {
-    for (let i = 0; i < links.length; i++) { if
-        (links[i].href.includes("https://xn----7sbab5aqcbiddtdj1e1g.xn--p1ai/musical_instruments")) { let link=links[i];
-        console.log("Найдена строка " + links[i]);
+  if (btn !== undefined) {
+  document.getElementsByClassName('input__control')[0].value = keyword;
+  btn.click();
+
+  } else {
+  for (let i = 0; i < links.length; i++) { if
+    (links[i].href.includes("https://xn----7sbab5aqcbiddtdj1e1g.xn--p1ai/musical_instruments")) { 
+    let link=links[i];
+    console.log("Найдена строка " + links[i]);
           link.click();
           break;
-        }
       }
     }
-    function getRandom(min, max) {
-      return Math.floor(Math.random() * (max - min) + min);
-    }
+  }
+  function getRandom(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
+  }
