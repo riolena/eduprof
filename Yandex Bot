@@ -1,39 +1,74 @@
 // ==UserScript==
-// @name         Yandex Bot
-// @namespace    http://tampermonkey.net/
-// @version      0.1
-// @description  try to take over the world!
-// @author       Elena Nazartseva
-// @match        https://yandex.ru/*
-// @match        https://xn----7sbab5aqcbiddtdj1e1g.xn--p1ai/musical_instruments/*
-// @grant        none
+// @name Yandex Bot
+// @namespace http://tampermonkey.net/
+// @version 0.1
+// @description try to take over the world!
+// @author Elena Nazartseva
+// @match https://yandex.ru/*
+// @match https://xn----7sbab5aqcbiddtdj1e1g.xn--p1ai/*
+// @grant none
 // ==/UserScript==
 
 
-let keywords = ["валторна", "как звучит флейта", "гобой"];
+let keywords = ["диапазон и регистры", "басово-теноровый", "создателем саксофонов", "как звучит флейта"];
+let input = document.querySelector('.input__control');
 let keyword = keywords[getRandom(0, keywords.length)];
 
-document.querySelector('.input__control').value = keyword;
 let btn = document.getElementsByClassName('button')[0];
 let links = document.links;
+let i = 0;
 
 if (btn !== undefined) {
-    document.querySelector('.input__control').value = keyword;
-    btn.click();
-
-} else {
-    for (let i = 0; i < links.length; i++) { if
-        (links[i].href.includes("https://xn----7sbab5aqcbiddtdj1e1g.xn--p1ai/musical_instruments")) {
-            let link=links[i];
-            console.log("Найдена строка " + links[i]);
-            if(links[i].target == '_blank'){
-                links[i].removeAttribute('target');
-            }
-            link.click();
-            break;
+    let timerId = setInterval(() => {
+        input.value += keyword[i];
+        i++;
+        if (i == keyword.length) {
+            clearInterval(timerId);
+            btn.click();
         }
-                                           }
+    }, 650);
+
+}else if(location.hostname == "xn----7sbab5aqcbiddtdj1e1g.xn--p1ai"){
+    console.log("мы на месте");
+
+    setInterval(()=>{
+        let index = getRandom(0,links.length);
+        if(getRandom(0,101)>=60) {
+            location.href = "https://yandex.ru";
+        }
+        else if (links[index].href.indexOf("xn----7sbab5aqcbiddtdj1e1g.xn--p1ai") !== -1)
+        {links[index].click();}
+    }, getRandom(1000,5000));
+
 }
+else {
+    let nextYandexPage = true;
+    for (let i = 0; i < links.length; i++) {
+        if (links[i].href.includes("https://xn----7sbab5aqcbiddtdj1e1g.xn--p1ai")) {
+        let link=links[i];
+        let nextYandexPage=false;
+        console.log("Найдена строка " + links[i]);
+        if(links[i].target == '_blank'){
+        links[i].removeAttribute('target');
+        }
+        setTimeout(() => {link.click();}, getRandom(1000, 4000));
+
+        break;
+    }
+    }
+
+    if(nextYandexPage){
+        let nextPage = document.querySelector(" a[aria-label$='Следующая страница' ]"); setTimeout(()=>
+        {nextPage.click();}, getRandom(3000, 4500));
+    }
+    if(document.querySelector("span[aria-label$='Текущая страница 5']").innerText !== null &&
+       document.querySelector("span[aria-label$='Текущая страница 5']").innerText !== undefined){
+        let nextYandexPage = false;
+        location.href = "https://yandex.ru";
+    }
+}
+
+
 function getRandom(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
 }
