@@ -1,35 +1,39 @@
-    // ==UserScript==
-    // @name Yandex Bot
-    // @namespace http://tampermonkey.net/
-    // @version 0.1
-    // @description try to take over the world!
-    // @author Elena Nazartseva
-    // @match https://yandex.ru/*
-    // @grant none
-    // ==/UserScript==
+// ==UserScript==
+// @name         Yandex Bot
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       Elena Nazartseva
+// @match        https://yandex.ru/*
+// @match        https://xn----7sbab5aqcbiddtdj1e1g.xn--p1ai/musical_instruments/*
+// @grant        none
+// ==/UserScript==
 
 
-  let keywords = ["валторна", "как звучит флейта", "гобой"];
-  let keyword = keywords[getRandom(0, keywords.length)];
+let keywords = ["валторна", "как звучит флейта", "гобой"];
+let keyword = keywords[getRandom(0, keywords.length)];
 
-  document.getElementsByClassName('input__control')[0].value = keyword;
-  let btn = document.getElementsByClassName('button')[0];
-  let links = document.links;
+document.querySelector('.input__control').value = keyword;
+let btn = document.getElementsByClassName('button')[0];
+let links = document.links;
 
-  if (btn !== undefined) {
-  document.getElementsByClassName('input__control')[0].value = keyword;
-  btn.click();
+if (btn !== undefined) {
+    document.querySelector('.input__control').value = keyword;
+    btn.click();
 
-  } else {
-  for (let i = 0; i < links.length; i++) { if
-    (links[i].href.includes("https://xn----7sbab5aqcbiddtdj1e1g.xn--p1ai/musical_instruments")) { 
-    let link=links[i];
-    console.log("Найдена строка " + links[i]);
-          link.click();
-          break;
-      }
-    }
-  }
-  function getRandom(min, max) {
+} else {
+    for (let i = 0; i < links.length; i++) { if
+        (links[i].href.includes("https://xn----7sbab5aqcbiddtdj1e1g.xn--p1ai/musical_instruments")) {
+            let link=links[i];
+            console.log("Найдена строка " + links[i]);
+            if(links[i].target == '_blank'){
+                links[i].removeAttribute('target');
+            }
+            link.click();
+            break;
+        }
+                                           }
+}
+function getRandom(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
-  }
+}
