@@ -14,7 +14,7 @@ let keywords = ["диапазон и регистры", "басово-тенор
 let input = document.querySelector('.input__control');
 let keyword = keywords[getRandom(0, keywords.length)];
 
-let btn = document.getElementsByClassName('button')[0];
+let btn = document.getElementsByClassName('button mini-suggest__button button_theme_search button_size_search i-bem button_js_inited')[0];
 let links = document.links;
 let i = 0;
 
