@@ -1,74 +1,93 @@
 // ==UserScript==
-// @name Yandex Bot
+// @name Yandex Bot2
 // @namespace http://tampermonkey.net/
 // @version 0.1
 // @description try to take over the world!
 // @author Elena Nazartseva
 // @match https://yandex.ru/*
+// @match https://napli.ru/*
+// @match https://psyholog.me/*
 // @match https://xn----7sbab5aqcbiddtdj1e1g.xn--p1ai/*
 // @grant none
 // ==/UserScript==
-
-
-let keywords = ["диапазон и регистры", "басово-теноровый", "создателем саксофонов", "как звучит флейта"];
+let sites = {
+    "napli.ru":["10 самых популярных шрифтов от Google", "Отключение редакций и ревизий в WordPress", "Вывод произвольных типов записей в WordPress"],
+    "psyholog.me":["Центр здоровых отношений Запятая", "Услуги центра здоровых отношений Запятая", "Чекалина Елена психолог"],
+    "xn----7sbab5aqcbiddtdj1e1g.xn--p1ai":["Как звучит кларнет", "Как звучит гобой", "Музыкальные диктанты", "Сузафон", "Виолончель"]
+};
+let site = Object.keys(sites)[getRandom(0, Object.keys(sites).length)];
+let keywords = sites[site];
 let input = document.querySelector('.input__control');
 let keyword = keywords[getRandom(0, keywords.length)];
-
 let btn = document.getElementsByClassName('button mini-suggest__button button_theme_search button_size_search i-bem button_js_inited')[0];
 let links = document.links;
 let i = 0;
-
 if (btn !== undefined) {
+    document.cookie = `site = ${site}`;
+}else if(location.hostname == "yandex.ru"){
+    site = getCookie("site");
+}else{
+    site = location.hostname;
+}
+if (btn !== undefined) {
+    document.cookie = `site = ${site}`;
     let timerId = setInterval(() => {
         input.value += keyword[i];
         i++;
-        if (i == keyword.length) {
+        if (i == keyword.length){
             clearInterval(timerId);
-            btn.click();
-        }
-    }, 650);
-
-}else if(location.hostname == "xn----7sbab5aqcbiddtdj1e1g.xn--p1ai"){
-    console.log("мы на месте");
-
-    setInterval(()=>{
-        let index = getRandom(0,links.length);
-        if(getRandom(0,101)>=60) {
-            location.href = "https://yandex.ru";
-        }
-        else if (links[index].href.indexOf("xn----7sbab5aqcbiddtdj1e1g.xn--p1ai") !== -1)
-        {links[index].click();}
-    }, getRandom(1000,5000));
-
-}
-else {
+                        btn.click();
+            }
+            },450);
+}else if (location.hostname == site) {
+            console.log("Мы на месте");
+            setInterval(()=>{
+                let index = getRandom(0, links.length);
+                console.log(links.length);
+            if (getRandom(0, 101)>=85) {
+               location.href = "https://yandex.ru";
+}else if (links[index].href.indexOf(site) !== -1) {
+               links[index].click();}
+}, getRandom(2500, 4500));
+} else {
     let nextYandexPage = true;
-    for (let i = 0; i < links.length; i++) {
-        if (links[i].href.includes("https://xn----7sbab5aqcbiddtdj1e1g.xn--p1ai")) {
-        let link=links[i];
-        let nextYandexPage=false;
-        console.log("Найдена строка " + links[i]);
-        if(links[i].target == '_blank'){
-        links[i].removeAttribute('target');
+    for (let i = 0; i<links.length; i++) {
+        if (links[i].href.includes(site)){
+            let link = links[i];
+            nextYandexPage = false;
+            console.log("Найдена строка "+link);
+            setTimeout(() => {
+                 if(link.target == '_blank'){
+        link.removeAttribute('target');
         }
-        setTimeout(() => {link.click();}, getRandom(1000, 4000));
+                link.click();},
+                getRandom(2000,4000));
+            break;
+        }
+    }
 
-        break;
+if(nextYandexPage){
+          setTimeout(()=>{
+            document.querySelector("[aria-label ='Следующая страница' ]").click();},
+                     getRandom(2000, 4500));
     }
-    }
-
-    if(nextYandexPage){
-        let nextPage = document.querySelector(" a[aria-label$='Следующая страница' ]"); setTimeout(()=>
-        {nextPage.click();}, getRandom(3000, 4500));
-    }
-    if(document.querySelector("span[aria-label$='Текущая страница 5']").innerText !== null &&
-       document.querySelector("span[aria-label$='Текущая страница 5']").innerText !== undefined){
+    if(document.querySelector("span[aria-label$='Текущая страница 5']").innerText !== null){
         let nextYandexPage = false;
         location.href = "https://yandex.ru";
     }
-}
+    }
+
+
+
 
 
 function getRandom(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
+}
+
+function getCookie(name) {
+  let matches = document.cookie.match(new RegExp(
+    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+  ));
+  return matches ? decodeURIComponent(matches[1]) : undefined;
 }
